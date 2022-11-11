@@ -10,11 +10,7 @@ import { AuthModule } from 'src/auth/auth.module';
 
 
 @Module({
-  providers: [UserService, PrismaService, 
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-  },],
+  providers: [UserService, PrismaService],
   exports: [UserService],
   controllers: [UserController],
   imports: [forwardRef(() => AuthModule) ]

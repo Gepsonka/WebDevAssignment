@@ -7,7 +7,6 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateUserDto } from './user.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { request } from 'http';
 
 
 
