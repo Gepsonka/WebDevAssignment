@@ -50,7 +50,6 @@ export class UserController {
         return user;
     }
 
-    @UseGuards(AuthGuard('jwt'))
     @Patch()
     updatUser(
         @Request() req,
