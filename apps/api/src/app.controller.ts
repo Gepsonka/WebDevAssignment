@@ -1,4 +1,4 @@
-import { Controller, Request, Post, UseGuards, Get } from '@nestjs/common';
+import { Controller, Request, Post, UseGuards, Get, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth/auth.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
@@ -9,9 +9,14 @@ import { Public } from './public.provider';
 export class AppController {
   constructor(private authService: AuthService) {}
 
+  @Public()
   @Post('auth/login')
-  async login(@Request() req) {
-    return this.authService.login(req.user);
+  async login(@Body() cred:{username: string, password: string}, @Request() req) {
+    const user = {
+      username: cred.username,
+      password: cred.password
+    }
+    return this.authService.login(user);
   }
 
   @Get('profile')
@@ -19,12 +24,11 @@ export class AppController {
     return req.user;
   }
 
-  @Public()
-  @Get('dogname')
+
+  
+  @Post('dogname')
   getDogName(@Request() req){
-    return {
-      name: 'csoki'
-    }
+    return req.user
   }
 
 }
