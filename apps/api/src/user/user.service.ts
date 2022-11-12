@@ -45,12 +45,14 @@ export class UserService {
         where: Prisma.UserWhereUniqueInput;
         data: Prisma.UserUpdateInput;
     }): Promise<User | null> {
-        if (params.data.password_hash !== undefined){
-            params.data.password_hash = await bcrypt.hash(params.data.password_hash, process.env.HASH_ROUNDS);
+        const {where, data} = params;
+
+        if (data.password_hash !== undefined){
+            data.password_hash = bcrypt.hashSync(data.password_hash, process.env.HASH_ROUNDS);
         }
         return this.prisma.user.update({
-            where: params.where,
-            data: params.data
+            where: where,
+            data: data
         })
     }
 
@@ -68,7 +70,7 @@ export class UserService {
         })
     }
 
-    async searchUsersByUsername(username: string): Promise<Prisma.JsonObject | null> {
+    async autocompleteUsersByUsername(username: string): Promise<Prisma.JsonObject | null> {
         return this.prisma.user.aggregateRaw({
             pipeline:[
                 {

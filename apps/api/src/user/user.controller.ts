@@ -1,13 +1,8 @@
-import { Body, Controller, createParamDecorator,Request ,forwardRef, Get, Inject, Param, Patch, Post, Put, RawBodyRequest, Req, UseGuards, ExecutionContext } from '@nestjs/common';
+import { Body, Controller, Request , Get, Param, Patch, Post, HttpException, HttpStatus, Delete } from '@nestjs/common';
 import { UserService } from './user.service';
-import { Prisma, User as UserModel } from '@prisma/client';
+import { Prisma, User, User as UserModel } from '@prisma/client';
 import { Public } from 'src/public.provider';
-import { LocalAuthGuard } from 'src/auth/local-auth.guard';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { CreateUserDto } from './user.dto';
-import { AuthService } from 'src/auth/auth.service';
-import { AuthGuard } from '@nestjs/passport';
-
+import { CreateUserDto, UpdateUserDto } from './user.dto';
 
 
   
@@ -16,7 +11,6 @@ import { AuthGuard } from '@nestjs/passport';
 export class UserController {
     constructor(
         private userService: UserService, 
-        private authService: AuthService
     )
     {}
 
@@ -25,21 +19,24 @@ export class UserController {
     async createUser(
         @Body() createUserDto: CreateUserDto
     ): Promise<any> {
-        try{
-            const newUser = await this.userService.createUser({
-                username: createUserDto.username,
-                first_name: createUserDto.first_name,
-                last_name: createUserDto.last_name,
-                email: createUserDto.email,
-                password_hash: createUserDto.password // hashed in user.service
-            })
-
-            delete newUser.password_hash;
-            return newUser;
-        } catch(e) {
-            console.log(e)
-            return {msg: 'error occurred'}
+        if (await this.userService.getUserByEmail(createUserDto.email) !== null){
+            throw new HttpException({msg: "User with this email is already registered!"}, HttpStatus.BAD_REQUEST);
         }
+
+        if (await this.userService.getUserByUsername(createUserDto.username) !== null){
+            throw new HttpException({msg: "User with this username is already registered!"}, HttpStatus.BAD_REQUEST);
+        }
+
+        const newUser = await this.userService.createUser({
+            username: createUserDto.username,
+            first_name: createUserDto.first_name,
+            last_name: createUserDto.last_name,
+            email: createUserDto.email,
+            password_hash: createUserDto.password // hashed in user.service
+        });
+
+        delete newUser.password_hash;
+        return newUser;
     }
 
     @Public()
@@ -51,20 +48,29 @@ export class UserController {
     }
 
     @Patch()
-    updatUser(
+    async updateUser(
         @Request() req,
-        @Body() postData: {
-            username?: string,
-            first_name?: string,
-            last_name?: string,
-            email?: string,
-            password?: string
-        },
+        @Body() updateUserDto: UpdateUserDto
     ) {
-        console.log(req.user)
-        return req.user
+        const where: Prisma.UserWhereUniqueInput = {username: req.user.username};
+
+        console.log(updateUserDto.username)
+        const data: Prisma.UserUpdateInput = updateUserDto
+        const user = await this.userService.updateUser({where, data});
+        delete user.password_hash;
+
+        return user;
+        
     }
 
+    @Delete()
+    async deleteUser(
+        @Request() req,
+    ): Promise<User> {
+        const where = {username: req.user.username}
 
+        return await this.userService.deleteUser(where);
+    }
 
+    
 }

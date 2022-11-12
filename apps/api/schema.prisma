@@ -18,6 +18,7 @@ model User {
     password_hash String
     created_at    DateTime @default(now()) @db.Timestamp
     updated_at    DateTime @default(now()) @updatedAt @db.Timestamp
+    todos Todo[]
 
     @@unique([username])
     @@unique([email])
@@ -29,27 +30,34 @@ model User {
 
 model Todo {
     id String @id @default(auto()) @map("_id") @db.ObjectId
+    user User @relation(fields: [user_id], references: [id])
+    user_id String @db.ObjectId
     title String
-    descripion String
+    description String?
     completed Boolean @default(false)
     created_at    DateTime @default(now()) @db.Timestamp
     updated_at    DateTime @default(now()) @updatedAt @db.Timestamp
+    sub_todos SubTodo[]
 
+    @@unique([id, user_id])
+    @@unique([user_id, title])
     @@index([title])
-    @@index([descripion])
-    @@index([title, descripion])
+    @@index([description])
+    @@index([title, description])
 }
 
 
 model SubTodo {
     id String @id @default(auto()) @map("_id") @db.ObjectId
+    todo Todo @relation(fields: [todo_id], references: [id])
     todo_id    String   @db.ObjectId
-    descripion String
+    description String
     completed Boolean @default(false)
     created_at    DateTime @default(now()) @db.Timestamp
     updated_at    DateTime @default(now()) @updatedAt @db.Timestamp
 
+    @@unique([todo_id, description])
     @@index([todo_id])
-    @@index([descripion])
-    @@index([descripion, todo_id])
+    @@index([description])
+    @@index([description, todo_id])
 }

@@ -8,9 +8,10 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { TodoModule } from './todo/todo.module';
 import { SubTodoModule } from './sub-todo/sub-todo.module';
+import { AutocorrectModule } from './autocorrect/autocorrect.module';
 
 @Module({
-  imports: [AuthModule, UserModule, UserModule, ConfigModule.forRoot(), TodoModule, SubTodoModule,],
+  imports: [AuthModule, UserModule, UserModule, ConfigModule.forRoot(), TodoModule, SubTodoModule, AutocorrectModule,],
   controllers: [AppController],
   providers: [
     AppService,
