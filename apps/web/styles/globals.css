@@ -1,0 +1,21 @@
+@font-face {
+    font-family: "Aldrich";
+    src: url("../assets/Aldrich-Regular.ttf") format("truetype");
+}
+
+body{
+    margin: 0;
+}
+
+.marketing-link {
+    text-decoration: none;
+}
+
+.marketing-link:hover {
+    text-decoration: line-through;
+}
+
+.marketing-title {
+    font-size: 20px;
+    font-weight: 800;
+}
