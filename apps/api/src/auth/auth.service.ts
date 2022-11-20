@@ -8,19 +8,19 @@ const bcrypt = require('bcrypt');
 export class AuthService {
   constructor(private usersService: UserService, private jwtService: JwtService) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
+  async validateUser(username: string, password: string): Promise<any> {
     const user = await this.usersService.getUserByUsername(username);
-    if (user && bcrypt.compareSync(pass, user.password_hash)) {
+    if (user && bcrypt.compareSync(password, user.password_hash)) {
       const { password_hash, ...result } = user;
-      return result;
+      return result;  
     }
     return null;
   }
 
   async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
+    const payload = { username: user.username, sub: user.id };
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(payload, {expiresIn: 60 * 60}),
     };
   }
 }
