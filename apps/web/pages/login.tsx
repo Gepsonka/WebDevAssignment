@@ -7,7 +7,7 @@ import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import Link from "next/link";
 import { Toast } from "primereact/toast";
-import { AxiosInstance } from "axios";
+import axios, { AxiosInstance } from "axios";
 import { axiosInstance } from "../axios/axios";
 
 const login = () => {
@@ -27,7 +27,7 @@ const login = () => {
 
 
     useEffect(() => {
-        if (localStorage.getItem('token') === null){
+        if (localStorage.getItem('token') !== null){
             router.push('/');
         }
     }, [])
@@ -39,6 +39,17 @@ const login = () => {
                 username: username,
                 password: password
             })
+            
+            localStorage.setItem('token', res.data.access_token);
+            try {
+                const res = await axiosInstance.get('/profile')
+                router.push(`/user/${res.data.userId}`)
+            } catch (e) {
+                console.log(e)
+                // @ts-ignore
+                toast.current.show({severity: 'error', summary: 'Unexpected error occurred during login', detail: 'Unknown error'});
+            }
+
         } catch (e) {
             // @ts-ignore
             toast.current.show({severity: 'error', summary: 'Registration fail', detail: e.response.data.message})
@@ -50,7 +61,7 @@ const login = () => {
 
     return (
         <div>
-            <Navbar isLoggedIn={false} />
+            <Navbar/>
             <div className="flex h-screen w-screen justify-content-center align-items-center">
                 <Card className='col-4 md:col-4 sm:col-10 text-center'>
                     <h2 className='mb-5 mt-1' >Login</h2>

@@ -41,10 +41,19 @@ export class UserController {
 
     @Public()
     @Get(':id')
-    async getUserById(@Param('id') id: string): Promise<UserModel> {
-        const user = await this.userService.getUserById(id);
-        delete user.password_hash;
-        return user;
+    async getUserById(@Param('id') id: string): Promise<UserModel | {message: string}> {
+        try{
+            const user = await this.userService.getUserById(id);
+            if (user === null) {
+                return new HttpException({message: 'User with id not found'}, HttpStatus.NOT_FOUND)
+            }
+            delete user.password_hash;
+            return user;
+        } catch (e) {
+            console.log(e)
+            return new HttpException({message: "Bad requset!"}, HttpStatus.BAD_REQUEST)
+        }
+        
     }
 
     @Patch()

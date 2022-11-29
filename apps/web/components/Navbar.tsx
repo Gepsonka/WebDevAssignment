@@ -2,33 +2,41 @@ import "primereact/resources/themes/lara-light-indigo/theme.css";
 import 'primereact/resources/primereact.min.css';
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Menubar } from 'primereact/menubar';
 import { Image } from 'primereact/image';
 import { AutoComplete } from 'primereact/autocomplete';
 import { useRouter } from "next/router";
-import { useQuery } from '@tanstack/react-query'
 import axios from "axios";
 
 
-export interface NavbarProps {
-    isLoggedIn: boolean;
-}
-
-const Navbar = (props: NavbarProps) => {
+const Navbar = () => {
     const router = useRouter();
     const [searchedUsername, setSearchedUsername] = useState([]);
-    const [filteredUsers, setFilteredUsers] = useState<any>([])
+    const [filteredUsers, setFilteredUsers] = useState<any>([]);
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     let items: any[] = [];
 
-    if (props.isLoggedIn) {
+    useEffect(() => {
+        setIsLoggedIn(localStorage.getItem('token') !== null);
+
+    }, [])
+
+
+    const logout = () => {
+        localStorage.removeItem('token');
+        router.push('login');
+    }
+
+    if (isLoggedIn) {
         items = [
             {
                 label: 'My TODOs',
                 command: () => router.push('/')
             },
             {
-                label: 'Logout'
+                label: 'Logout',
+                command: () => logout()
             },
         ]
     } else {

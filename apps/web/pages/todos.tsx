@@ -17,7 +17,7 @@ const Todos = (props: TodosProps) => {
 
     return (
         <div>
-            <Navbar isLoggedIn={false} />
+            <Navbar/>
             <div className="flex w-screen">
                 <div className="md:col-3 sm:col-10">
                     <Card className="flex flex-column text-center gap-2 profile-container bg-blue-100">
