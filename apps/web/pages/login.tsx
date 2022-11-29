@@ -7,8 +7,8 @@ import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import Link from "next/link";
 import { Toast } from "primereact/toast";
-import { instance } from "../axiosDefaults";
-
+import { AxiosInstance } from "axios";
+import { axiosInstance } from "../axios/axios";
 
 const login = () => {
     const router = useRouter()
@@ -27,20 +27,24 @@ const login = () => {
 
 
     useEffect(() => {
-        if (!!localStorage.getItem('token')){
+        if (localStorage.getItem('token') === null){
             router.push('/');
         }
     }, [])
 
     const login = async (username: string, password: string) => {
+        setIsLoading(true)
         try {
-            const res = instance.post('/auth/login', {
+            const res = await axiosInstance.post('/auth/login', {
                 username: username,
                 password: password
             })
         } catch (e) {
             // @ts-ignore
             toast.current.show({severity: 'error', summary: 'Registration fail', detail: e.response.data.message})
+            setPasswordIsValid(false);
+            setUsernameIsValid(false);
+            setIsLoading(false);
         }
     }
 

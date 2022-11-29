@@ -11,7 +11,6 @@ export class AutocorrectService {
         return this.prisma.user.aggregateRaw({
             pipeline: [
                 {
-                    
                     $search: {
                         index: 'UserSearchWebDev',
                         "autocomplete": {

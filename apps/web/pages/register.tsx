@@ -12,8 +12,9 @@ import { Dialog } from 'primereact/dialog';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { Toast } from 'primereact/toast';
-import { instance } from '../axiosDefaults';
 import Navbar from '../components/Navbar';
+import { AxiosInstance } from 'axios';
+import { axiosInstance } from '../axios/axios';
 
 const Register: NextPage = () => {
     const router = useRouter();
@@ -269,7 +270,7 @@ const Register: NextPage = () => {
         }
 
         try {
-            const res = await instance.post('/user', requestData);
+            const res = await axiosInstance.post('/user', requestData);
             setRegistrationDialogVisibile(true);
         } catch (e){
             // @ts-ignore
