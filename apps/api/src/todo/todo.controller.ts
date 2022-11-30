@@ -45,7 +45,7 @@ export class TodoController {
             return await this.todoService.getTodosByUserId(param.userId);
         } catch (e) {
             console.log(e)
-            throw new HttpException({'msg': 'User with this id does not exists'}, HttpStatus.NOT_FOUND);
+            throw new HttpException({'message': 'User with this id does not exists'}, HttpStatus.NOT_FOUND);
         }
     }
 
