@@ -6,9 +6,6 @@ import SubTodo, { SubTodoProps } from "./SubTodo";
 import { Toast } from 'primereact/toast';
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
-import axios from "axios";
-
-
 
 
 export interface TodoProps {
@@ -19,7 +16,7 @@ export interface TodoProps {
     completed: boolean;
     created_at: Date;
     updated_at: Date;
-    subTodos: SubTodoProps[];
+    sub_todos: SubTodoProps[];
 }
 
 const Todo = (props: TodoProps) => {
@@ -68,7 +65,8 @@ const Todo = (props: TodoProps) => {
                 description: updateDescription
             })
             console.log(res.data)
-            setTodo({...res.data})
+            const sub_todos = [...todo.sub_todos];
+            setTodo({...res.data, sub_todos: sub_todos});
             setIsUpdating(false);
         } catch (e) {
             // @ts-ignore
@@ -96,7 +94,7 @@ const Todo = (props: TodoProps) => {
                 description: newSubTodo,
                 ParentTodoId: todo.id
             })
-            todo.subTodos.push(res.data);
+            todo.sub_todos.push(res.data);
             setNewSubTodo('');
         } catch (e) {
             // @ts-ignore
@@ -105,7 +103,7 @@ const Todo = (props: TodoProps) => {
     }
 
     return (
-        <div >
+        <div>
             <Card className={`${isDeleted ? 'hidden' : null} mb-3`}>
                 <div className="flex align-items-center mb-3 p-fluid">
                     {isUpdating ? <InputText placeholder="Title" className={`mr-2 ${updateTitle === '' ? 'p-invalid' : null}`} value={updateTitle} onChange={(e) => setUpdateTitle(e.target.value)}/> : <span className={`flex-grow-1 mr-2 ${todo.completed ? 'line-through' : null}`}>{todo.title}</span>}
@@ -118,7 +116,7 @@ const Todo = (props: TodoProps) => {
                 </div>
                 <div className="flex flex-column">
                     {
-                        todo.subTodos.map((value: any, index: number) => <SubTodo key={index} id={value.id} user_id={todo.user_id} description={value.description} completed={value.completed} createdAt={value.created_at}/>)
+                        todo.sub_todos.map((value: any, index: number) => <SubTodo key={index} id={value.id} user_id={todo.user_id} description={value.description} completed={value.completed} createdAt={value.created_at}/>)
                     }
                 </div>
                 <div className="flex mt-4">

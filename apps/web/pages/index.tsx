@@ -5,7 +5,7 @@ import Link from 'next/link';
 export default function Web() {
   return (
     <div className="w-full">
-      <Navbar isLoggedIn={false}/>
+      <Navbar/>
       <div className="flex flex-column w-screen h-screen justify-content-center align-items-center fadein animation-duration-400">
         <span className="text-center mb-4 text-8xl">
           The best <span className="bg-blue-400">TODO</span> app ever. 

@@ -127,25 +127,6 @@ const Register: NextPage = () => {
         }
     }, [lastName])
 
-    
-    useEffect(() => {
-        usernameCheck();
-    }, [username]);
-
-    useEffect(() => { // Checking if username is taken at every change
-        setIsUsernameTakenLoading(true);
-        axios.post(`${process.env.NEXT_PUBLIC_FLASK_BACKEND}/is-username-exists`, {"username": username}).then((res) => {
-            if (res.data.isTaken){
-                setUsernameIsTaken(true);
-            } else {
-                setUsernameIsTaken(false);
-            }
-        }).catch((e) => {
-            setUsernameIsTaken(false);
-        })
-        setIsUsernameTakenLoading(false);
-    }, [username])
-
     useEffect(() => {
         passwordCheck();
         if (passwordAgain !== password){

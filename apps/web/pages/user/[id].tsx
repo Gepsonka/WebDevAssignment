@@ -8,7 +8,7 @@ import Todo from "../../components/Todo";
 
 
 
-const currentUser = () => {
+const CurrentUser = () => {
     const router = useRouter();
     const { id } = router.query;
     const [user, setUser] = useState<any | null>({});
@@ -68,7 +68,7 @@ const currentUser = () => {
                 </div>
                 <div className="md:col-9 sm:col-12 justify-content-center ">
                     {todos.map((value: any, index: number) => {
-                        return <Todo key={index} id={value.id} title={value.title} description={value.description} completed={value.completed} created_at={value.created_at} subTodos={value.sub_todos} user_id={value.user_id} updated_at={value.updated_at}/>
+                        return <Todo key={index} id={value.id} title={value.title} description={value.description} completed={value.completed} created_at={value.created_at} sub_todos={value.sub_todos} user_id={value.user_id} updated_at={value.updated_at}/>
                     })}
                 </div>
             </div>
@@ -77,4 +77,4 @@ const currentUser = () => {
 }
 
 
-export default currentUser;
+export default CurrentUser;

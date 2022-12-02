@@ -149,7 +149,7 @@ export class SubTodoController {
             if (currentTodo.user_id !== currentUser.id){
                 throw new ForbiddenException('Cannot delete this task because it is not yours');
             }
-            return await this.subTodoService.decompleteSubTodo(params.id);
+            return await this.subTodoService.deleteSubTodo(params.id);
         } catch (e) {
             throw new NotFoundException('Sub-todo with id does not exists');
         }

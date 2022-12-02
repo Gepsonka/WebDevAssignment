@@ -24,7 +24,7 @@ export interface SubTodoProps {
 export default function SubTodo(props: SubTodoProps) {
     const [subTodo, setSubTodo] = useState(props);
     const [isUpdating, setIsUpdating] = useState(false);
-    const [updatingDescription, setUpdateDescription] = useState(subTodo.description);
+    const [updatingDescription, setUpdateDescription] = useState(subTodo.description.slice());
     const [isDeleted, setIsDeleted] = useState(false);
 
     const toast = useRef(null);
@@ -61,9 +61,9 @@ export default function SubTodo(props: SubTodoProps) {
             const res = await axiosInstance.put(`/sub-todo/${subTodo.id}`, {
                 description: updatingDescription,
             })
-
-            setSubTodo({...subTodo, description: updatingDescription});
+            setSubTodo({...subTodo, description: res.data.description});
             setIsUpdating(false);
+            console.log(subTodo.description)
         } catch (e) {
             // @ts-ignore
             toast.current.show({severity:'error', summary: 'Could not update task', detail: e.response.data.message, life: 3000});
@@ -73,6 +73,7 @@ export default function SubTodo(props: SubTodoProps) {
     const deleteSubTodo = async () => {
         try {
             const res = await axiosInstance.delete(`/sub-todo/${subTodo.id}`)
+            console.log(res.data)
             setIsDeleted(true);
         } catch (e) {
             // @ts-ignore
@@ -84,10 +85,10 @@ export default function SubTodo(props: SubTodoProps) {
         <div className={`${isDeleted ? 'hidden' : null}`}>
             <Card className="p-0 m-2 border-indigo-500 border-2">
                 <div className="flex p-fluid align-items-center">
-                    {isUpdating ? <InputText placeholder="Title" className={`mr-2 ${updatingDescription === '' ? 'p-invalid' : null}`} value={updatingDescription} onChange={(e) => setUpdateDescription(e.target.value)} /> : <span className={`flex-grow-1 ${subTodo.completed ? 'line-through' : null}`}>{props.description}</span>}
+                    {isUpdating ? <InputText placeholder="Title" className={`mr-2 ${updatingDescription === '' ? 'p-invalid' : null}`} value={updatingDescription} onChange={(e) => setUpdateDescription(e.target.value)} /> : <span className={`flex-grow-1 ${subTodo.completed ? 'line-through' : null}`}>{subTodo.description}</span>}
                     <Checkbox className="mr-2 ml-3" onChange={e => clickCheckbox()} checked={subTodo.completed}></Checkbox>
                     {subTodo.user_id === localStorage.getItem('user') && (isUpdating ? <Button onClick={() => updateSubTodo()} icon="pi pi-check" className="p-button-sm p-button-rounded p-button-text p-button-success mr-2" aria-label="Submit" /> : <Button onClick={() => setIsUpdating(!isUpdating)} icon="pi pi-pencil" className="p-button-sm p-button-rounded p-button-text p-button-info mr-2" aria-label="Submit" />)}
-                    {subTodo.user_id === localStorage.getItem('user') && <Button onClick={deleteSubTodo} icon="pi pi-trash" className="p-button-sm p-button-rounded p-button-text p-button-danger" aria-label="Submit" />}
+                    {subTodo.user_id === localStorage.getItem('user') && <Button onClick={() => deleteSubTodo()} icon="pi pi-trash" className="p-button-sm p-button-rounded p-button-text p-button-danger" aria-label="Submit" />}
                 </div>
             </Card>
             <Toast ref={toast} />
