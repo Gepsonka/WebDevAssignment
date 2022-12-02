@@ -40,7 +40,7 @@ const currentUser = () => {
 
         const getTodos = async () => {
             try {
-                const res = await axiosInstance.get(`/user/todo/${router.query.id}`);
+                const res = await axiosInstance.get(`/todo/user/${router.query.id}`);
                 setTodos(res.data);
             } catch (e) {
                 console.log(e);
@@ -62,12 +62,12 @@ const currentUser = () => {
                 <div className="md:col-3 sm:col-12">
                     <Card>
                         <h3 className="text-center">{user.username}</h3>
-                        <p>{id}</p>
+                        <p className="text-center">{user.first_name} {user.last_name}</p>
                     </Card>
                 </div>
                 <div className="md:col-9 sm:col-12 justify-content-center ">
                     {todos.map((value: any, index: number) => {
-                        return <Todo id={value.id}/>
+                        return <Todo key={index} id={value.id} title={value.title} description={value.description} completed={value.completed} created_at={value.created_at} subTodos={value.sub_todos} user_id={value.user_id} updated_at={value.updated_at}/>
                     })}
                 </div>
             </div>

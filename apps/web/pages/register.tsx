@@ -271,6 +271,7 @@ const Register: NextPage = () => {
 
         try {
             const res = await axiosInstance.post('/user', requestData);
+            console.log(res.data)
             setRegistrationDialogVisibile(true);
         } catch (e){
             // @ts-ignore
@@ -291,7 +292,7 @@ const Register: NextPage = () => {
 
     return (
         <div>
-            <Navbar isLoggedIn={false} />
+            <Navbar/>
         <div className='relative grid justify-content-center align-content-center auth-bg auth-body py-6 min-h-screen'>
             <Card className='col-4 md:col-4 sm:col-10 text-center'>  
                 <h2 className='mb-5 mt-1' >Create your account</h2>

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Patch, Post, Request } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, HttpException, HttpStatus, NotFoundException, Param, Patch, Post, Put, Request } from '@nestjs/common';
 import { Prisma, SubTodo } from '@prisma/client';
 import { Public } from 'src/public.provider';
 import { TodoService } from 'src/todo/todo.service';
@@ -25,7 +25,7 @@ export class SubTodoController {
         try {
             return await this.subTodoService.getSubTodoById(params.id);
         } catch (e) {
-            throw new HttpException({'msg': 'Subtodo with this id does not exists!'}, HttpStatus.NOT_FOUND);
+            throw new NotFoundException('Subtodo with this id does not exists!');
         }
     }
 
@@ -38,7 +38,7 @@ export class SubTodoController {
         try {
             return await this.subTodoService.getSubTodoByTodoId(params.todoId);
         } catch (e) {
-            throw new HttpException({'msg': 'Todo with this id does not exists!'}, HttpStatus.NOT_FOUND);
+            throw new NotFoundException('Todo with this id does not exists!');
         }
     }
 
@@ -51,7 +51,7 @@ export class SubTodoController {
         try{
             const parentTodo = await this.todoService.getTodoById(createSubTodo.ParentTodoId);
             if (parentTodo.user_id !== currentUser.id){
-                throw new HttpException({'msg': 'Cannot complete this todo because it is not yours'}, HttpStatus.UNAUTHORIZED);
+                throw new ForbiddenException('Cannot ceate sub-todo because todo is not yours');
             }
     
             const data: Prisma.SubTodoCreateInput = {
@@ -65,12 +65,12 @@ export class SubTodoController {
             return await this.subTodoService.createSubTodo(data);
 
         } catch (e) {
-            throw new HttpException({'msg': 'Did not find a Todo with this ID'}, HttpStatus.NOT_FOUND);
+            throw new NotFoundException('Did not find a Todo with this ID');
         }
         
     }
 
-    @Patch(':id')
+    @Put(':id')
     async updateSubTodo(
         @Request() req,
         @Body() updateSubTodoDto: UpdateSubTodoDto,
@@ -80,7 +80,7 @@ export class SubTodoController {
         try{
             const parentTodo = await this.todoService.getTodoById(await (await this.subTodoService.getSubTodoById(params.id)).todo_id);
             if (parentTodo.user_id !== currentUser.id){
-                throw new HttpException({'msg': 'Cannot complete this todo because it is not yours'}, HttpStatus.UNAUTHORIZED);
+                throw new ForbiddenException('Cannot complete this todo because it is not yours');
             }
 
             const where: Prisma.SubTodoWhereUniqueInput = {
@@ -94,7 +94,46 @@ export class SubTodoController {
             return await this.subTodoService.updateSubTodo(where, data);
 
         } catch (e) {
-            throw new HttpException({'msg': 'Did not find a sub-todo with this ID'}, HttpStatus.NOT_FOUND);
+            throw new NotFoundException('Did not find a sub-todo with this ID');
+        }
+    }
+
+
+    @Put('/complete/:id')
+    async completeTodo(
+        @Request() req,
+        @Param() params: {id: string}
+    ): Promise<SubTodo> {
+        try {
+            const currentUser = await this.userService.getUserByUsername(req.user.username);
+            const currentSubTodo = await this.subTodoService.getSubTodoById(params.id);
+            const currentTodo = await this.todoService.getTodoById(currentSubTodo.todo_id);
+            if (currentTodo.user_id !== currentUser.id){
+                throw new ForbiddenException('Cannot complete this todo because it is not yours');
+            }
+
+            return await this.subTodoService.completeSubTodo(params.id);
+        } catch (e) {
+            throw new NotFoundException('Todo with id does not exists');
+        }
+    }
+
+    @Put('/decomplete/:id')
+    async decompleteTodo(
+        @Request() req,
+        @Param() params: {id: string}
+    ): Promise<SubTodo> {
+        try {
+            const currentUser = await this.userService.getUserByUsername(req.user.username);
+            const currentSubTodo = await this.subTodoService.getSubTodoById(params.id);
+            const currentTodo = await this.todoService.getTodoById(currentSubTodo.todo_id);
+            if (currentTodo.user_id !== currentUser.id){
+                throw new ForbiddenException('Cannot decomplete this todo because it is not yours');
+            }
+
+            return await this.subTodoService.decompleteSubTodo(params.id);
+        } catch (e) {
+            throw new NotFoundException('Todo with id does not exists');
         }
     }
 }

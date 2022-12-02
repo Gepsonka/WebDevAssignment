@@ -43,7 +43,7 @@ const login = () => {
             localStorage.setItem('token', res.data.access_token);
             try {
                 const res = await axiosInstance.get('/profile')
-                localStorage.setItem('user', res.data);
+                localStorage.setItem('user', res.data.userId);
                 router.push(`/user/${res.data.userId}`)
             } catch (e) {
                 console.log(e)

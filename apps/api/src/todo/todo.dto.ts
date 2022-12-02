@@ -16,7 +16,6 @@ export class CreateTodoDto {
 
 
 export class UpdateTodoDto {
-    @IsOptional()
     title: string;
 
     @IsOptional()

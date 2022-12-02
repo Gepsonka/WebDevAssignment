@@ -1,4 +1,4 @@
-import { Body, Controller, Request , Get, Param, Patch, Post, HttpException, HttpStatus, Delete } from '@nestjs/common';
+import { Body, Controller, Request , Get, Param, Patch, Post, HttpException, HttpStatus, Delete, NotFoundException, BadRequestException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Prisma, User, User as UserModel } from '@prisma/client';
 import { Public } from 'src/public.provider';
@@ -20,11 +20,11 @@ export class UserController {
         @Body() createUserDto: CreateUserDto
     ): Promise<any> {
         if (await this.userService.getUserByEmail(createUserDto.email) !== null){
-            throw new HttpException({msg: "User with this email is already registered!"}, HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("User with this email is already registered!");
         }
 
         if (await this.userService.getUserByUsername(createUserDto.username) !== null){
-            throw new HttpException({msg: "User with this username is already registered!"}, HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("User with username already exists!")
         }
 
         const newUser = await this.userService.createUser({
@@ -45,13 +45,13 @@ export class UserController {
         try{
             const user = await this.userService.getUserById(id);
             if (user === null) {
-                return new HttpException({message: 'User with id not found'}, HttpStatus.NOT_FOUND)
+                return new NotFoundException("User with id does not exists!")
             }
             delete user.password_hash;
             return user;
         } catch (e) {
             console.log(e)
-            return new HttpException({message: "Bad requset!"}, HttpStatus.BAD_REQUEST)
+            return new BadRequestException("Bad requset!")
         }
         
     }
@@ -63,12 +63,16 @@ export class UserController {
     ) {
         const where: Prisma.UserWhereUniqueInput = {username: req.user.username};
 
-        console.log(updateUserDto.username)
         const data: Prisma.UserUpdateInput = updateUserDto
-        const user = await this.userService.updateUser({where, data});
-        delete user.password_hash;
+        try{
+            const user = await this.userService.updateUser({where, data});
+            delete user.password_hash;
 
-        return user;
+            return user;
+        } catch (e) {
+            
+        }
+        
         
     }
 

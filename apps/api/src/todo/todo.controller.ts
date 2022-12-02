@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, Put, Request } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, ForbiddenException, Get, HttpException, HttpStatus, NotFoundException, Param, Patch, Post, Put, Request, UnauthorizedException } from '@nestjs/common';
 import { Prisma, Todo } from '@prisma/client';
 import { Public } from 'src/public.provider';
 import { UserService } from 'src/user/user.service';
@@ -22,7 +22,7 @@ export class TodoController {
         try{
             return await this.todoService.getTodoById(param.id)
         } catch (e) {
-            throw new HttpException({'msg': 'Todo with this id does not exists'}, HttpStatus.NOT_FOUND);
+            throw new NotFoundException('Todo with this id does not exists');
         }
     }
 
@@ -45,7 +45,7 @@ export class TodoController {
             return await this.todoService.getTodosByUserId(param.userId);
         } catch (e) {
             console.log(e)
-            throw new HttpException({'message': 'User with this id does not exists'}, HttpStatus.NOT_FOUND);
+            throw new NotFoundException('User with this id does not exists');
         }
     }
 
@@ -70,12 +70,12 @@ export class TodoController {
             return await this.todoService.createTodo(data)
         } catch (e) {
             console.log(e)
-            throw new HttpException({'msg': 'You already have a TODO with the same title and description!'}, HttpStatus.BAD_REQUEST);
+            throw new BadRequestException('You already have a TODO with the same title and description!');
         }
         
     }
 
-    @Patch(':id')
+    @Put(':id')
     async updateTodo(
         @Request() req,
         @Param() param: {id: string},
@@ -84,12 +84,12 @@ export class TodoController {
         try{
             const notUpdatedTodo = await this.todoService.getTodoById(param.id);
             if ((await this.userService.getUserByUsername(req.user.username)).id != notUpdatedTodo.user_id){
-                throw new HttpException({'msg': 'Cannot update this todo because it is not yours'}, HttpStatus.UNAUTHORIZED);
+                throw new ForbiddenException('Cannot update this todo because it is not yours');
             }
             const where: Prisma.TodoWhereUniqueInput = {id: param.id};
             return await this.todoService.updateTodoData(where, updateTodoDto);
         } catch (e) {
-            throw new HttpException({'msg': 'Todo with id does not exists'}, HttpStatus.NOT_FOUND);
+            throw new NotFoundException('Todo with id does not exists');
         }
     }
 
@@ -102,11 +102,11 @@ export class TodoController {
             const currentUser = await this.userService.getUserByUsername(req.user.username);
             const currentTodo = await this.todoService.getTodoById(params.id);
             if (currentTodo.user_id !== currentUser.id){
-                throw new HttpException({'msg': 'Cannot delete this todo because it is not yours'}, HttpStatus.UNAUTHORIZED);
+                throw new ForbiddenException('Cannot delete this todo because it is not yours');
             }
             return await this.todoService.deleteTodo(params.id);
         } catch (e) {
-            throw new HttpException({'msg': 'Todo with id does not exists'}, HttpStatus.NOT_FOUND);
+            throw new NotFoundException('Todo with id does not exists');
         }
     }
 
@@ -119,12 +119,12 @@ export class TodoController {
             const currentUser = await this.userService.getUserByUsername(req.user.username);
             const currentTodo = await this.todoService.getTodoById(params.id);
             if (currentTodo.user_id !== currentUser.id){
-                throw new HttpException({'msg': 'Cannot complete this todo because it is not yours'}, HttpStatus.UNAUTHORIZED);
+                throw new ForbiddenException('Cannot complete this todo because it is not yours');
             }
 
             return await this.todoService.completeTodo(params.id);
         } catch (e) {
-            throw new HttpException({'msg': 'Todo with id does not exists'}, HttpStatus.NOT_FOUND);
+            throw new NotFoundException('Todo with id does not exists');
         }
     }
 
@@ -137,12 +137,12 @@ export class TodoController {
             const currentUser = await this.userService.getUserByUsername(req.user.username);
             const currentTodo = await this.todoService.getTodoById(params.id);
             if (currentTodo.user_id !== currentUser.id){
-                throw new HttpException({'msg': 'Cannot decomplete this todo because it is not yours'}, HttpStatus.UNAUTHORIZED);
+                throw new ForbiddenException('Cannot decomplete this todo because it is not yours');
             }
 
             return await this.todoService.decompleteTodo(params.id);
         } catch (e) {
-            throw new HttpException({'msg': 'Todo with id does not exists'}, HttpStatus.NOT_FOUND);
+            throw new NotFoundException('Todo with id does not exists');
         }
     }
 }
