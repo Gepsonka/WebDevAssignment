@@ -24,7 +24,8 @@ const currentUser = () => {
         const getProfile = async () => {
             try {
                 const res = await axiosInstance.get(`/user/${router.query.id}`);
-                if (res.data.userId === router.query.id) {
+                console.log(res.data)
+                if (localStorage.getItem('user') === router.query.id) {
                     setIsUsersProfile(true);
                 } else {
                     setIsUsersProfile(false);
@@ -51,7 +52,7 @@ const currentUser = () => {
         getProfile();
     }, [router.isReady])
 
-    if (user === null) {
+    if (user === null) {    
         return <Error statusCode={404} title={'User not found'}/>
     }
         
@@ -60,7 +61,7 @@ const currentUser = () => {
             <Navbar/>
             <div className="grid p-3">
                 <div className="md:col-3 sm:col-12">
-                    <Card>
+                    <Card className="border-green-500 border-2">
                         <h3 className="text-center">{user.username}</h3>
                         <p className="text-center">{user.first_name} {user.last_name}</p>
                     </Card>

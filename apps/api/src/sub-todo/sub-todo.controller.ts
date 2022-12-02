@@ -1,4 +1,4 @@
-import { Body, Controller, ForbiddenException, Get, HttpException, HttpStatus, NotFoundException, Param, Patch, Post, Put, Request } from '@nestjs/common';
+import { Body, Controller, Delete, ForbiddenException, Get, HttpException, HttpStatus, NotFoundException, Param, Patch, Post, Put, Request } from '@nestjs/common';
 import { Prisma, SubTodo } from '@prisma/client';
 import { Public } from 'src/public.provider';
 import { TodoService } from 'src/todo/todo.service';
@@ -134,6 +134,24 @@ export class SubTodoController {
             return await this.subTodoService.decompleteSubTodo(params.id);
         } catch (e) {
             throw new NotFoundException('Todo with id does not exists');
+        }
+    }
+
+    @Delete(':id')
+    async deleteSubTodo(
+        @Request() req,
+        @Param() params: {id: string}
+    ): Promise<SubTodo> {
+        try {
+            const currentUser = await this.userService.getUserByUsername(req.user.username);
+            const currentSubTodo = await this.subTodoService.getSubTodoById(params.id);
+            const currentTodo = await this.todoService.getTodoById(currentSubTodo.todo_id);
+            if (currentTodo.user_id !== currentUser.id){
+                throw new ForbiddenException('Cannot delete this task because it is not yours');
+            }
+            return await this.subTodoService.decompleteSubTodo(params.id);
+        } catch (e) {
+            throw new NotFoundException('Sub-todo with id does not exists');
         }
     }
 }

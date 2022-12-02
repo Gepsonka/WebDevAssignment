@@ -29,7 +29,7 @@ const Todo = (props: TodoProps) => {
 
     const [updateTitle, setUpdateTitle] = useState(todo.title);
     const [updateDescription, setUpdateDescription] = useState(todo.description);
-    const [isDeleted, setIdDeleted] = useState(false)
+    const [isDeleted, setIsDeleted] = useState(false)
 
     const [newSubTodo, setNewSubTodo] = useState('')
     
@@ -77,7 +77,13 @@ const Todo = (props: TodoProps) => {
     }
 
     const deleteTodo = async () => {
-        
+        try {
+            const res = await axiosInstance.delete(`/todo/${todo.id}`)
+            setIsDeleted(true);
+        } catch (e) {
+            // @ts-ignore
+            toast.current.show({severity:'error', summary: 'Could not delete task', detail: e.response.data.message, life: 3000});
+        }
     }
 
     const clickCheckbox = async () => {
@@ -99,13 +105,13 @@ const Todo = (props: TodoProps) => {
     }
 
     return (
-        <div className={`${isDeleted ? 'hidden' : null}`}>
-            <Card>
+        <div >
+            <Card className={`${isDeleted ? 'hidden' : null} mb-3`}>
                 <div className="flex align-items-center mb-3 p-fluid">
                     {isUpdating ? <InputText placeholder="Title" className={`mr-2 ${updateTitle === '' ? 'p-invalid' : null}`} value={updateTitle} onChange={(e) => setUpdateTitle(e.target.value)}/> : <span className={`flex-grow-1 mr-2 ${todo.completed ? 'line-through' : null}`}>{todo.title}</span>}
                     <Checkbox className="mr-3" onChange={e => clickCheckbox()} checked={todo.completed}></Checkbox>
                     {todo.user_id === localStorage.getItem('user') && (isUpdating ? <Button onClick={() => updateTodo()} icon="pi pi-check" className="p-button-sm p-button-rounded p-button-text p-button-success mr-2" aria-label="Submit" /> : <Button onClick={() => setIsUpdating(!isUpdating)} icon="pi pi-pencil" className="p-button-sm p-button-rounded p-button-text p-button-info mr-2" aria-label="Submit" />)}
-                    {todo.user_id === localStorage.getItem('user') && <Button icon="pi pi-trash" className="p-button-sm p-button-rounded p-button-text p-button-danger" aria-label="Submit" />}
+                    {todo.user_id === localStorage.getItem('user') && <Button onClick={() => deleteTodo()} icon="pi pi-trash" className="p-button-sm p-button-rounded p-button-text p-button-danger" aria-label="Submit" />}
                 </div>
                 <div className="p-fluid mb-3">
                     {isUpdating ? <InputText placeholder="Description" className="p-inputtext-sm" value={updateDescription} onChange={(e) => setUpdateDescription(e.target.value)}/> : <small className={`${todo.completed ? 'line-through' : null}`}>{todo.description}</small>}
