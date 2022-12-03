@@ -8,7 +8,10 @@ export class TodoService {
 
     async createTodo(data: Prisma.TodoCreateInput):Promise<Todo> {
         return this.prisma.todo.create({
-            data
+            data,
+            include: {
+                sub_todos: true
+            }
         })
     }
 
@@ -30,6 +33,9 @@ export class TodoService {
             },
             include: {
                 sub_todos: true
+            },
+            orderBy: {
+                created_at: 'desc'
             }
         })
     }
@@ -45,7 +51,7 @@ export class TodoService {
         return this.prisma.todo.delete({
             where: {
                 id: id
-            }
+            },
         })
     }
 

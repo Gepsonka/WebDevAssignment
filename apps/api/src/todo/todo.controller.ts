@@ -106,6 +106,7 @@ export class TodoController {
             }
             return await this.todoService.deleteTodo(params.id);
         } catch (e) {
+            console.log(e)
             throw new NotFoundException('Todo with id does not exists');
         }
     }

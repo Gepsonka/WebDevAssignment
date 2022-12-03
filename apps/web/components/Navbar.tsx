@@ -17,7 +17,6 @@ const Navbar = () => {
     const [searchedUsername, setSearchedUsername] = useState('');
     const [filteredUsers, setFilteredUsers] = useState<any>([]);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-    const [createTodoDialog, setCreateTodoDialog] = useState(false);
     const [newTodo, setNewTodo] = useState({});
     const [newSubTodos, setNewSubTodos] = useState([]);
 
@@ -42,10 +41,6 @@ const Navbar = () => {
                 command: () => router.push(`/user/${localStorage.getItem('user')}`)
             },
             {
-                label: "Create Task",
-                command: () => setCreateTodoDialog(true)
-            },
-            {
                 label: 'Logout',
                 command: () => logout()
             },
@@ -66,7 +61,7 @@ const Navbar = () => {
 
     const userItemTemplate = (item: any) => {
         return (
-            <div className="flex flex-column">
+            <div onClick={() => router.push('/')} className="flex flex-column">
                 <span>{item.first_name} {item.last_name}</span>
                 <small>@{item.username}</small>
             </div>
@@ -89,9 +84,7 @@ const Navbar = () => {
     return (
         <>
             <Menubar className="sticky border-noround top-0 m-0" start={start} end={end} model={items} />
-            <Dialog visible={createTodoDialog} onHide={() => setCreateTodoDialog(false)}>
-
-            </Dialog>
+            
         </>
         
     )

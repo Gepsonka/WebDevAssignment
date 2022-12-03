@@ -78,6 +78,8 @@ const Todo = (props: TodoProps) => {
         try {
             const res = await axiosInstance.delete(`/todo/${todo.id}`)
             setIsDeleted(true);
+            // @ts-ignore
+            toast.current.show({severity:'success', summary: 'Task deleted successfully', detail: '', life: 3000});
         } catch (e) {
             // @ts-ignore
             toast.current.show({severity:'error', summary: 'Could not delete task', detail: e.response.data.message, life: 3000});
@@ -121,7 +123,7 @@ const Todo = (props: TodoProps) => {
                 </div>
                 <div className="flex mt-4">
                     <InputText placeholder="Description" className="flex-grow-1 mr-3" value={newSubTodo} onChange={(e) => setNewSubTodo(e.target.value)} />
-                    <Button onClick={() => addNewSubTodo()} label="Add sub-todo" aria-label="Submit" />
+                    <Button onClick={() => addNewSubTodo()} label="Add sub-task" aria-label="Submit" />
                 </div>
             </Card>
             <Toast ref={toast} />
