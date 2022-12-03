@@ -25,6 +25,7 @@ const CurrentUser = () => {
     const [newTodoDescription, setNewTodoDescription] = useState('');
     const [newTodoSubTodos, setNewTodoSubTodos] = useState<{ description: string }[]>([{description: "hellooo"}])
     const [newSubTodoDescription, setNewSubTodoDescription] = useState('');
+    const [loggedInUserId, setLoggedInUserId] = useState<string | null>('')
 
     const toast = useRef(null);
 
@@ -60,6 +61,8 @@ const CurrentUser = () => {
                 console.log(e);
             }
         }
+
+        setLoggedInUserId(localStorage.getItem('user'));
 
         getTodos();
         getProfile();
@@ -127,7 +130,7 @@ const CurrentUser = () => {
                         <p className="text-center">{user.first_name} {user.last_name}</p>
                     </Card>
                     <div className="p-fluid">
-                        <Button onClick={() => setCreateTodoDialog(true)} label="Create Task" className="p-button-info" />
+                        { loggedInUserId === router.query.id && <Button onClick={() => setCreateTodoDialog(true)} label="Create Task" className="p-button-info" />}
                     </div>
                 </div>
                 <div className="md:col-9 sm:col-12 justify-content-center ">
