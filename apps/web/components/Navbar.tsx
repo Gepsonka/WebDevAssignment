@@ -83,8 +83,7 @@ const Navbar = () => {
 
     return (
         <>
-            <Menubar className="sticky border-noround top-0 m-0" start={start} end={end} model={items} />
-            
+            <Menubar className="sticky border-noround top-0 m-0 z-5" start={start} end={end} model={items} />
         </>
         
     )

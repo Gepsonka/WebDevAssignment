@@ -63,7 +63,7 @@ const CurrentUser = () => {
 
         getTodos();
         getProfile();
-    }, [router.isReady])
+    }, [router.query.id])
 
 
     const addSubTodoToNewTodo = () => {
@@ -132,7 +132,7 @@ const CurrentUser = () => {
                 </div>
                 <div className="md:col-9 sm:col-12 justify-content-center ">
                     {todos.map((value: any, index: number) => {
-                        return <Todo key={index} id={value.id} title={value.title} description={value.description} completed={value.completed} created_at={value.created_at} sub_todos={value.sub_todos} user_id={value.user_id} updated_at={value.updated_at} />
+                        return <Todo key={value.id} id={value.id} title={value.title} description={value.description} completed={value.completed} created_at={value.created_at} sub_todos={value.sub_todos} user_id={value.user_id} updated_at={value.updated_at} />
                     })}
                 </div>
             </div>
@@ -153,7 +153,7 @@ const CurrentUser = () => {
                     <div className="my-3">
                         {newTodoSubTodos.map((value: any, index: number) => {
                             return (
-                                <div key={index} className="flex my-2 p-2 pl-4 align-items-center border-round-md border-indigo-500 border-2 shadow-2">
+                                <div key={value} className="flex my-2 p-2 pl-4 align-items-center border-round-md border-indigo-500 border-2 shadow-2">
                                     <span className="flex-grow-1">{value.description}</span>
                                     <Button onClick={() => deleteSubTodoFromNewTodo(index)} icon="pi pi-times" className="p-button-rounded p-button-danger" aria-label="Cancel" />
                                 </div>
