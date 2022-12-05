@@ -86,7 +86,7 @@ export default function SubTodo(props: SubTodoProps) {
             <Card className="p-0 m-2 border-indigo-500 border-2">
                 <div className="flex p-fluid align-items-center">
                     {isUpdating ? <InputText placeholder="Title" className={`mr-2 ${updatingDescription === '' ? 'p-invalid' : null}`} value={updatingDescription} onChange={(e) => setUpdateDescription(e.target.value)} /> : <span className={`flex-grow-1 ${subTodo.completed ? 'line-through' : null}`}>{subTodo.description}</span>}
-                    <Checkbox className="mr-2 ml-3" onChange={e => clickCheckbox()} checked={subTodo.completed}></Checkbox>
+                    <Checkbox className="mr-2 ml-3" disabled={subTodo.user_id !== localStorage.getItem('user')} onChange={e => clickCheckbox()} checked={subTodo.completed}></Checkbox>
                     {subTodo.user_id === localStorage.getItem('user') && (isUpdating ? <Button onClick={() => updateSubTodo()} icon="pi pi-check" className="p-button-sm p-button-rounded p-button-text p-button-success mr-2" aria-label="Submit" /> : <Button onClick={() => setIsUpdating(!isUpdating)} icon="pi pi-pencil" className="p-button-sm p-button-rounded p-button-text p-button-info mr-2" aria-label="Submit" />)}
                     {subTodo.user_id === localStorage.getItem('user') && <Button onClick={() => deleteSubTodo()} icon="pi pi-trash" className="p-button-sm p-button-rounded p-button-text p-button-danger" aria-label="Submit" />}
                 </div>

@@ -109,7 +109,7 @@ const Todo = (props: TodoProps) => {
             <Card className={`${isDeleted ? 'hidden' : null} mb-3`}>
                 <div className="flex align-items-center mb-3 p-fluid">
                     {isUpdating ? <InputText placeholder="Title" className={`mr-2 ${updateTitle === '' ? 'p-invalid' : null}`} value={updateTitle} onChange={(e) => setUpdateTitle(e.target.value)}/> : <span className={`flex-grow-1 mr-2 ${todo.completed ? 'line-through' : null}`}>{todo.title}</span>}
-                    <Checkbox className="mr-3" onChange={e => clickCheckbox()} checked={todo.completed}></Checkbox>
+                    <Checkbox className="mr-3" disabled={todo.user_id !== localStorage.getItem('user')} onChange={e => clickCheckbox()} checked={todo.completed}></Checkbox>
                     {todo.user_id === localStorage.getItem('user') && (isUpdating ? <Button onClick={() => updateTodo()} icon="pi pi-check" className="p-button-sm p-button-rounded p-button-text p-button-success mr-2" aria-label="Submit" /> : <Button onClick={() => setIsUpdating(!isUpdating)} icon="pi pi-pencil" className="p-button-sm p-button-rounded p-button-text p-button-info mr-2" aria-label="Submit" />)}
                     {todo.user_id === localStorage.getItem('user') && <Button onClick={() => deleteTodo()} icon="pi pi-trash" className="p-button-sm p-button-rounded p-button-text p-button-danger" aria-label="Submit" />}
                 </div>
@@ -121,10 +121,14 @@ const Todo = (props: TodoProps) => {
                         todo.sub_todos.map((value: any, index: number) => <SubTodo key={index} id={value.id} user_id={todo.user_id} description={value.description} completed={value.completed} createdAt={value.created_at}/>)
                     }
                 </div>
-                <div className="flex mt-4">
-                    <InputText placeholder="Description" className="flex-grow-1 mr-3" value={newSubTodo} onChange={(e) => setNewSubTodo(e.target.value)} />
-                    <Button onClick={() => addNewSubTodo()} label="Add sub-task" aria-label="Submit" />
-                </div>
+                {
+                    todo.user_id === localStorage.getItem('user') &&
+                    <div className="flex mt-4">
+                        <InputText placeholder="Description" className="flex-grow-1 mr-3" value={newSubTodo} onChange={(e) => setNewSubTodo(e.target.value)} />
+                        <Button onClick={() => addNewSubTodo()} label="Add sub-task" aria-label="Submit" />
+                    </div>
+                }
+                
             </Card>
             <Toast ref={toast} />
         </div> 
