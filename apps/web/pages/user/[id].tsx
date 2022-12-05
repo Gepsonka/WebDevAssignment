@@ -38,7 +38,6 @@ const CurrentUser = () => {
         const getProfile = async () => {
             try {
                 const res = await axiosInstance.get(`/user/${router.query.id}`);
-                console.log(res.data)
                 if (localStorage.getItem('user') === router.query.id) {
                     setIsUsersProfile(true);
                 } else {
@@ -99,7 +98,6 @@ const CurrentUser = () => {
 
             let newTodos = [...todos];
             newTodos.unshift(res.data)
-            console.log(newTodos)
             setTodos(newTodos);
         } catch (e) {
             // @ts-ignore

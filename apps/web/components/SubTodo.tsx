@@ -32,7 +32,6 @@ export default function SubTodo(props: SubTodoProps) {
     const completeSubTodo = async () => {
         try {
             const res = await axiosInstance.put(`/sub-todo/complete/${subTodo.id}`)
-            console.log(res.data)
             setSubTodo({...subTodo, completed: true})
         } catch (e) {
             console.log(e)
@@ -63,7 +62,6 @@ export default function SubTodo(props: SubTodoProps) {
             })
             setSubTodo({...subTodo, description: res.data.description});
             setIsUpdating(false);
-            console.log(subTodo.description)
         } catch (e) {
             // @ts-ignore
             toast.current.show({severity:'error', summary: 'Could not update task', detail: e.response.data.message, life: 3000});
@@ -73,7 +71,6 @@ export default function SubTodo(props: SubTodoProps) {
     const deleteSubTodo = async () => {
         try {
             const res = await axiosInstance.delete(`/sub-todo/${subTodo.id}`)
-            console.log(res.data)
             setIsDeleted(true);
         } catch (e) {
             // @ts-ignore

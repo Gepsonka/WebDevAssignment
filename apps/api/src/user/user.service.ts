@@ -10,7 +10,6 @@ export class UserService {
 
     async createUser(data: Prisma.UserCreateInput): Promise<User>{
         data.password_hash = bcrypt.hashSync(data.password_hash, 10);
-        console.log(data.password_hash)
         
         return this.prisma.user.create({
             data,

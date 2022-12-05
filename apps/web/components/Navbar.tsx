@@ -74,7 +74,6 @@ const Navbar = () => {
     const searchUser = async (event: any) => {
         try {
             const res = await axiosInstance.get(`/autocorrect/${event.query}`);
-            console.log(event.query);
             setFilteredUsers(res.data);
         } catch(e) {
             console.log(e);

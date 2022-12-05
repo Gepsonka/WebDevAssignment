@@ -33,7 +33,6 @@ const Todo = (props: TodoProps) => {
     const completeTodo = async () => {
         try {
             const res = await axiosInstance.put(`/todo/complete/${todo.id}`)
-            console.log(res.data)
             setTodo({...todo, completed: true})
         } catch (e) {
             console.log(e)
@@ -64,7 +63,6 @@ const Todo = (props: TodoProps) => {
                 title: updateTitle,
                 description: updateDescription
             })
-            console.log(res.data)
             const sub_todos = [...todo.sub_todos];
             setTodo({...res.data, sub_todos: sub_todos});
             setIsUpdating(false);

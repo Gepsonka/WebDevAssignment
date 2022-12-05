@@ -40,7 +40,6 @@ export class TodoController {
         @Request() req,
         @Param() param
     ): Promise<Todo[]> {
-        console.log(param.userId);
         try{
             return await this.todoService.getTodosByUserId(param.userId);
         } catch (e) {
